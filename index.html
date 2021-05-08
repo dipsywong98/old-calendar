@@ -5,6 +5,12 @@
 -界面上去除左侧的世界时间；
 -删除部分无用代码；
  -->
+ <!-- 修正chrome 問題及PWA by dipsy
+2021.5.8 相比上一版
++ 修正在非IE瀏覽器上無法使用的bug
++ 可以以PWA形式安裝在電腦/手機離線使用
++ 更手機友善
+ -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 
@@ -15,6 +21,18 @@
     <META content="gregorian solar calendar and chinese lunar calendar" name=description>
     <META http-equiv=Content-Type content="text/html; charset=gb2312">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="manifest.json" />
+    <!-- ios support -->
+    <link rel="apple-touch-icon" href="images/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-96x96.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-128x128.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-144x144.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-384x384.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-512x512.png" />
+    <meta name="apple-mobile-web-app-status-bar" content="#db4938" />
+    <meta name="theme-color" content="#db4938" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117723298-1"></script>
     <script>
         window.dataLayer = window.dataLayer || []
@@ -25,6 +43,16 @@
 
         gtag('js', new Date())
         gtag('config', 'UA-117723298-1')
+    </script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker
+                    .register("/serviceWorker.js")
+                    .then(res => console.log("service worker registered"))
+                    .catch(err => console.log("service worker not registered", err))
+            })
+        }
     </script>
     <SCRIPT language=JavaScript>
         /*****************************************************************************
@@ -486,93 +514,97 @@
 </HEAD>
 
 <BODY leftMargin=0 topMargin=0 onload=initial()>
+    <main>
 
-
-    <DIV id=detail style="POSITION: absolute"></DIV>
-    <CENTER>
-        <FORM name=CLD>
-            <TABLE>
-                <TBODY>
-                    <TR>
-                        <TD align=middle>
-                            <DIV style="Z-INDEX: -1; POSITION: absolute; TOP: 30px">
-                                <FONT id=YMBG style="FONT-SIZE: 90pt; COLOR: #f0f0f0; FONT-FAMILY: 'Arial Black'">
-                                    &nbsp;0000<BR>&nbsp;JUN</FONT>
-                            </DIV>
-                            <TABLE border=0>
-                                <TBODY>
-                                    <TR>
-                                        <TD bgColor=#000080 colSpan=7>
-                                            <FONT style="FONT-SIZE: 9pt" color=#ffffff size=2>西历<SELECT
-                                                    style="FONT-SIZE: 9pt" onchange=changeCld() name=SY>
-                                                    <SCRIPT language=JavaScript>
-                                                        for (i = 1900; i < 2050; i++) document.write('<option>' + i)
-                                                    </SCRIPT>
-                                                </SELECT>年<SELECT style="FONT-SIZE: 9pt" onchange=changeCld() name=SM>
-                                                    <SCRIPT language=JavaScript>
-                                                        for (i = 1; i < 13; i++) document.write('<option>' + i)
-                                                    </SCRIPT>
-                                                </SELECT>月</FONT>
-                                            <FONT id=GZ face=宋体 color=#ffffff size=4></FONT><BR>
-                                        </TD>
-                                    </TR>
-                                    <TR align=middle bgColor=#e0e0e0>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>日</FONT>
-                                        </TD>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>一</FONT>
-                                        </TD>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>二</FONT>
-                                        </TD>
-                                        <TD width=50>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>三</FONT>
-                                        </TD>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>四</FONT>
-                                        </TD>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>五</FONT>
-                                        </TD>
-                                        <TD width=54>
-                                            <FONT style="FONT-SIZE: 9pt" size=2>六</FONT>
-                                        </TD>
-                                    </TR>
-                                    <SCRIPT language=JavaScript>
-                                        var gNum
-                                        for (i = 0; i < 6; i++) {
-                                            document.write('<tr align=center>')
-                                            for (j = 0; j < 7; j++) {
-                                                gNum = i * 7 + j
-                                                document.write('<td id="GD' + gNum + '" onMouseOver="mOvr(' + gNum + ')" onMouseOut="mOut()"><font id="SD' + gNum + '" size=5 face="Arial Black"')
-                                                if (j == 0) document.write(' color=red')
-                                                if (j == 6)
-                                                    if (i % 2 == 1) document.write(' color=red')
-                                                    else document.write(' color=green')
-                                                document.write(' TITLE=""> </font><br><font id="LD' + gNum + '" size=2 style="font-size:9pt"> </font></td>')
+        <DIV id=detail style="POSITION: absolute"></DIV>
+        <CENTER>
+            <FORM name=CLD>
+                <TABLE>
+                    <TBODY>
+                        <TR>
+                            <TD align=middle>
+                                <DIV style="Z-INDEX: -1; POSITION: absolute; TOP: 30px">
+                                    <FONT id=YMBG style="FONT-SIZE: 90pt; COLOR: #f0f0f0; FONT-FAMILY: 'Arial Black'">
+                                        &nbsp;0000<BR>&nbsp;JUN</FONT>
+                                </DIV>
+                                <TABLE border=0>
+                                    <TBODY>
+                                        <TR>
+                                            <TD bgColor=#000080 colSpan=7>
+                                                <FONT style="FONT-SIZE: 9pt" color=#ffffff size=2>西历<SELECT
+                                                        style="FONT-SIZE: 9pt" onchange=changeCld() name=SY>
+                                                        <SCRIPT language=JavaScript>
+                                                            for (i = 1900; i < 2050; i++) document.write('<option>' + i)
+                                                        </SCRIPT>
+                                                    </SELECT>年<SELECT style="FONT-SIZE: 9pt" onchange=changeCld()
+                                                        name=SM>
+                                                        <SCRIPT language=JavaScript>
+                                                            for (i = 1; i < 13; i++) document.write('<option>' + i)
+                                                        </SCRIPT>
+                                                    </SELECT>月</FONT>
+                                                <FONT id=GZ face=宋体 color=#ffffff size=4></FONT><BR>
+                                            </TD>
+                                        </TR>
+                                        <TR align=middle bgColor=#e0e0e0>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>日</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>一</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>二</FONT>
+                                            </TD>
+                                            <TD width=50>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>三</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>四</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>五</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>六</FONT>
+                                            </TD>
+                                        </TR>
+                                        <SCRIPT language=JavaScript>
+                                            var gNum
+                                            for (i = 0; i < 6; i++) {
+                                                document.write('<tr align=center>')
+                                                for (j = 0; j < 7; j++) {
+                                                    gNum = i * 7 + j
+                                                    document.write('<td id="GD' + gNum + '" onMouseOver="mOvr(' + gNum + ')" onMouseOut="mOut()"><font id="SD' + gNum + '" size=5 face="Arial Black"')
+                                                    if (j == 0) document.write(' color=red')
+                                                    if (j == 6)
+                                                        if (i % 2 == 1) document.write(' color=red')
+                                                        else document.write(' color=green')
+                                                    document.write(' TITLE=""> </font><br><font id="LD' + gNum + '" size=2 style="font-size:9pt"> </font></td>')
+                                                }
+                                                document.write('</tr>')
                                             }
-                                            document.write('</tr>')
-                                        }
-                                    </SCRIPT>
-                                </TBODY>
-                            </TABLE>
-                        </TD>
-                        <TD vAlign=top align=middle width=60><BR><BR><BR><BR><INPUT style="FONT-SIZE: 9pt"
-                                onclick="pushBtm('YU')" type=button value=年↑><BR><INPUT style="FONT-SIZE: 9pt"
-                                onclick="pushBtm('YD')" type=button value=年↓>
-                            <P><INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('MU')" type=button value=月↑><BR><INPUT
-                                    style="FONT-SIZE: 9pt" onclick="pushBtm('MD')" type=button value=月↓>
-                            <P><INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('')" type=button value=本月>
-                            <P><INPUT style="FONT-SIZE: 9pt" onclick="location.href='javascript:history.go(-1)'"
-                                    type=button value=返回>
-                            </P>
-                        </TD>
-                    </TR>
-                </TBODY>
-            </TABLE>
-        </FORM>
-    </CENTER>
+                                        </SCRIPT>
+                                    </TBODY>
+                                </TABLE>
+                            </TD>
+                            <TD vAlign=top align=middle width=60><BR><BR><BR><BR><INPUT style="FONT-SIZE: 9pt"
+                                    onclick="pushBtm('YU')" type=button value=年↑><BR><INPUT style="FONT-SIZE: 9pt"
+                                    onclick="pushBtm('YD')" type=button value=年↓>
+                                <P><INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('MU')" type=button value=月↑><BR><INPUT
+                                        style="FONT-SIZE: 9pt" onclick="pushBtm('MD')" type=button value=月↓>
+                                <P><INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('')" type=button value=本月>
+                                <P><INPUT style="FONT-SIZE: 9pt" onclick="location.href='javascript:history.go(-1)'"
+                                        type=button value=返回>
+                                </P>
+                            </TD>
+                        </TR>
+                    </TBODY>
+                </TABLE>
+            </FORM>
+        </CENTER>
+    </main>
+
+
 </BODY>
 
 </HTML>
