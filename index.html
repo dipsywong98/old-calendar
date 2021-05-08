@@ -14,6 +14,7 @@
     <META content=All name=robots>
     <META content="gregorian solar calendar and chinese lunar calendar" name=description>
     <META http-equiv=Content-Type content="text/html; charset=gb2312">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117723298-1"></script>
     <script>
         window.dataLayer = window.dataLayer || []
@@ -183,7 +184,6 @@
         }
         //============================== 月历属性
         function calElement(sYear, sMonth, sDay, week, lYear, lMonth, lDay, isLeap, cYear, cMonth, cDay) {
-            console.log(cDay)
             this.isToday = false;
             //国历
             this.sYear = sYear;
@@ -233,7 +233,6 @@
                 //sYear,sMonth,sDay,week,
                 //lYear,lMonth,lDay,isLeap,
                 //cYear,cMonth,cDay
-                console.log(lDObj.dayCyl)
                 this[i] = new calElement(y, m + 1, i + 1, nStr1[(i + this.firstWeek) % 7],
                     lY, lM, lD++, lL,
                     cyclical(lDObj.yearCyl), cyclical(lDObj.monCyl), cyclical(lDObj.dayCyl++))
@@ -269,7 +268,6 @@
                     if (tmp1 >= 0 && tmp1 < n) {
                         tmp2 = lDPOS[tmp1] + Number(RegExp.$2) - 1
                         if (tmp2 >= 0 && tmp2 < this.length) {
-                            console.log(this, tmp2)
                             this[tmp2].lunarFestival += RegExp.$4 + ' '
                             if (RegExp.$3 == '*') this[tmp2].color = 'red'
                         }
@@ -425,7 +423,6 @@
                         '</TR></TABLE>';
                 s = '';
                 for (var i = 0; i < 12; i++) {
-                    console.log(cld, d, cld[d].cDay)
                     s = s + ("0" + (i * 2 + 23) % 24).slice(-2) + "-" + ("0" + (i * 2 + 1) % 24).slice(-2) + ' ' + Gan[(i * 2 + cld[d].cDay.substr(2, 1) * 24) / 2 % 10] + Zhi[(i * 2 + cld[d].cDay.substr(2, 1) * 24) % 24 / 2] + '时 ' + Taiguo[(i * 2 + cld[d].cDay.substr(2, 1) * 24) / 2 % 10] + Liuqi[(i * 2 + cld[d].cDay.substr(2, 1) * 24) % 24 / 2] + '时' + "<br>";
                 }
                 s = '<TABLE WIDTH="180" BORDER=0 CELLPADDING="2" CELLSPACING=0 BGCOLOR="#000066"><TR><TD>' +
