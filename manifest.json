@@ -1,6 +1,6 @@
 {
     "name": "万年历-无节令交接",
-    "short_name": "萬年曆",
+    "short_name": "万年历",
     "start_url": "index.html",
     "display": "standalone",
     "background_color": "#fdfdfd",

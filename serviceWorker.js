@@ -1,7 +1,10 @@
 const staticDevCalendar = "dev-calendar-site-v1"
 const assets = [
-  "/",
-  "/index.html",
+  "./",
+  "./index.html",
+  "./calendar.js",
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css",
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
 ]
 
 self.addEventListener("install", installEvent => {
