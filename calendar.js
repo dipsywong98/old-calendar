@@ -109,7 +109,7 @@ function monthDays(y, m) {
 function Lunar(objDate) {
     var i, leap = 0, temp = 0
     var baseDate = new Date(1900, 0, 31)
-    var offset = Math.ceil((objDate - baseDate) / 86400000)
+    var offset = Math.round((objDate - baseDate) / 86400000)
     this.dayCyl = offset + 40
     this.monCyl = 14
     for (i = 1900; i < 2050 && offset > 0; i++) {

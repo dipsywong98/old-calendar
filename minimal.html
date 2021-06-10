@@ -126,7 +126,7 @@
         function Lunar(objDate) {
             var i, leap = 0, temp = 0
             var baseDate = new Date(1900, 0, 31)
-            var offset = (objDate - baseDate) / 86400000
+            var offset = Math.round((objDate.getTime() - baseDate.getTime()) / (1000 * 3600 * 24))
             this.dayCyl = offset + 40
             this.monCyl = 14
             for (i = 1900; i < 2050 && offset > 0; i++) {
