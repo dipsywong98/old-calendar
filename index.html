@@ -57,8 +57,8 @@
             window.addEventListener("load", function () {
                 navigator.serviceWorker
                     .register("./serviceWorker.js")
-                    .then(res => console.log("service worker registered"))
-                    .catch(err => console.log("service worker not registered", err))
+                    .then(function(){ console.log("service worker registered")})
+                    .catch(function(err){console.log("service worker not registered", err)})
             })
         }
     </script>
@@ -179,7 +179,7 @@
                                                 document.write('<tr align=center>')
                                                 for (j = 0; j < 7; j++) {
                                                     gNum = i * 7 + j
-                                                    document.write(`<td class="cell" id="GD` + gNum + '" onClick="mOvr(' + gNum + ')"><font id="SD' + gNum + '" size=5 face="Arial Black"')
+                                                    document.write('<td class="cell" id="GD' + gNum + '" onClick="mOvr(' + gNum + ')"><font id="SD' + gNum + '" size=5 face="Arial Black"')
                                                     if (j == 0) document.write(' color=red')
                                                     if (j == 6)
                                                         if (i % 2 == 1) document.write(' color=red')

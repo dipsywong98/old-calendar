@@ -408,7 +408,7 @@ function mOvr(v) {
             s +
             '</FONT></TD></TR></TABLE>' + festival + '</TD></TR></TABLE>';
         document.all["detail"].innerHTML = s;
-        document.getElementById('detailModalLabel').innerHTML = `${cld[d].sYear}年${cld[d].sMonth}月${cld[d].sDay}日 星期${cld[d].week}`
+        document.getElementById('detailModalLabel').innerHTML = cld[d].sYear+'年'+cld[d].sMonth+'月'+cld[d].sDay+'日 星期'+cld[d].week
             // dStyle.left = x + offsetx - (width / 2);
             // dStyle.top = y + offsety;
             dStyle.visibility = "visible";
@@ -446,7 +446,7 @@ function initial() {
 
 
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function(){
     console.log('load', document.getElementById('detailModal'))
     myModal = new bootstrap.Modal(document.getElementById('detailModal'))
 })
