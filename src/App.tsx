@@ -9,50 +9,8 @@ import Menu from '@mui/material/Menu';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
-const 天干 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
-const 地支 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
-const 干轉五運: Record<string, string> = {
-  甲: '土太过',  乙: '金不及',  丙: '水太过',  丁: '木不及',  戊: '火太过',
-  己: '土不及',  庚: '金太过',  辛: '水不及',  壬: '木太过',  癸: '火不及'
-}
-const 支轉六氣: Record<string, string> = {
-  子: '少阴君火', 丑: '太阴湿土', 寅: '少阳相火', 卯: '阳明燥金', 辰: '太阳寒水', 巳: '厥阴风木',
-  午: '少阴君火', 未: '太阴湿土', 申: '少阳相火', 酉: '阳明燥金', 戌: '太阳寒水', 亥: '厥阴风木',
-}
-const 干轉洛書: Record<string, number> = {
-  甲: 3,
-  乙: 2,
-  丙: 1,
-  丁: 5,
-  戊: 5,
-  己: 5,
-  庚: 6,
-  辛: 7,
-  壬: 8,
-  癸: 4,
-}
-const 支轉洛書: Record<string, number> = {
-  子: 8,
-  丑: 4,
-  寅: 4,
-  卯: 3,
-  辰: 2,
-  巳: 2,
-  午: 9,
-  未: 5,
-  申: 5,
-  酉: 6,
-  戌: 7, 
-  亥: 7,
-
-}
-const 干轉八卦 = (年干: string, 月干: string, 日干: string) => {
-  const y = Number(干轉五運[年干][1] === '太')
-  const m = Number(干轉五運[月干][1] === '太')
-  const d = Number(干轉五運[日干][1] === '太')
-  return '乾兌离震巽坎艮坤'[y << 2 | m << 1 | d]
-}
+import { Highlighter } from './Highlighter';
+import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -77,13 +35,13 @@ const getDayViewModel = (solar: Solar) => {
     const 時支 = 地支[(lunar.getTimeZhiIndex() + offset) % 12]
     const 時運 = 干轉五運[時干]
     const 時氣 = 支轉六氣[時支]
-    return `${pad(timeStart)}-${pad(timeEnd)} ${時干}${時支}時 ${時運}${時氣}時 (${干轉洛書[時干]}${支轉洛書[時支]})`
+    return `${pad(timeStart)}-${pad(timeEnd)} ${時干}${時支}时 ${時運}${時氣}时 (${干轉洛書[時干]}${支轉洛書[時支]})`
   })
   const 年運氣 = `${年干}${年支}年 ${干轉五運[年干]}${支轉六氣[年支]}年 (${干轉洛書[年干]}${支轉洛書[年支]})`
   const 月運氣 = `${月干}${月支}月 ${干轉五運[月干]}${支轉六氣[月支]}月 (${干轉洛書[月干]}${支轉洛書[月支]})`
   const 日運氣 = `${日干}${日支}日 ${干轉五運[日干]}${支轉六氣[日支]}日 (${干轉洛書[日干]}${支轉洛書[日支]})`
-  const 八卦 = 干轉八卦(年干, 月干, 日干)
-  const lunarText = `农历 ${lunarMonth}${lunarDay} ${八卦}`
+  const 八卦 = `${干轉八卦(年干, 月干, 日干)}卦`
+  const lunarText = `农历 ${lunarMonth}${lunarDay}`
 
   const gzText = ``
   return {
@@ -115,7 +73,7 @@ function App() {
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   return (
-    <Grid sx={{position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }} container flexDirection='column'>
+    <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': {fontWeight: 800 }}} container flexDirection='column'>
       <AppBar position="static">
         <Toolbar sx={{ margin: 'auto' }}>
           <IconButton
@@ -278,26 +236,26 @@ function App() {
             <DialogTitle>
               {showDialog.detailHeading}
             </DialogTitle>
-            <DialogContent dividers>
-              <Typography>
+            <DialogContent dividers sx={{'*': {fontWeight: 800}}}>
+              <Highlighter>
                 {showDialog.lunarText}
-              </Typography>
-              <Typography>
+              </Highlighter>
+              <Highlighter>
                 {showDialog.支干}
-              </Typography>
-              <Typography>
+              </Highlighter>
+              <Highlighter>
                 {showDialog.年運氣}
-              </Typography>
-              <Typography>
+              </Highlighter>
+              <Highlighter>
                 {showDialog.月運氣}
-              </Typography>
-              <Typography>
+              </Highlighter>
+              <Highlighter>
                 {showDialog.日運氣}
-              </Typography>
-              <Typography>
+              </Highlighter>
+              <Highlighter>
                 {showDialog.八卦}
-              </Typography>
-              {showDialog.時干支.map((s) => <Typography>{s}</Typography>)}
+              </Highlighter>
+              {showDialog.時干支.map((s) => <Highlighter>{s}</Highlighter>)}
             </DialogContent>
           </>
         )}
