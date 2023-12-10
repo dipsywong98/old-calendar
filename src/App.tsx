@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { HolidayUtil, Solar, SolarMonth } from 'lunar-typescript';
-import { AppBar, Box, Container, Dialog, DialogContent, DialogTitle, Grid, IconButton, Input, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
+import { AppBar, Container, Dialog, DialogContent, DialogTitle, Grid, IconButton, Input, Link, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -87,7 +87,7 @@ function App() {
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   return (
-    <Box>
+    <Grid sx={{position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }} container flexDirection='column'>
       <AppBar position="static">
         <Toolbar sx={{ margin: 'auto' }}>
           <IconButton
@@ -180,45 +180,69 @@ function App() {
             size="large"><LastPageIcon /></IconButton>
         </Toolbar>
       </AppBar>
-      <Container sx={{ paddingX: 0, margin: 'auto' }}>
-        <Table sx={{ tableLayout: 'fixed', 'td,th': { px: 0, textAlign: 'center' } }}>
-          <TableHead>
-            <TableRow>
-              <TableCell size="small">日</TableCell>
-              <TableCell size="small">一</TableCell>
-              <TableCell size="small">二</TableCell>
-              <TableCell size="small">三</TableCell>
-              <TableCell size="small">四</TableCell>
-              <TableCell size="small">五</TableCell>
-              <TableCell size="small">六</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {weeks.map(week => (
-              <TableRow key={week.toFullString()}>
-                {week.getDays().map(getDayViewModel).map(day => (
-                  <TableCell
-                    key={day.solar.toYmd()}
-                    sx={{ opacity: day.solar.getMonth() !== month ? 0.4 : 1 }}
-                    size="small"
-                    onClick={() => setShowDialog(day)}>
-                    <Typography variant="h5" fontWeight='bold' color={day.displayColor}>
-                      {day.solarDayDisplay}
-                    </Typography>
-                    <Typography variant="caption" color={day.lunar.getJieQi() ? '#48c739' : day.displayColor}>
-                      <div>
-                        {day.lunarDayDisplay}
-                      </div>
-                      <div>
-                        {day.holidayDisplay}
-                      </div>
-                    </Typography>
-                  </TableCell>
-                ))}
+      <Container sx={{ paddingX: 0, margin: 'auto', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Grid item>
+          <Table sx={{ 
+            tableLayout: 'fixed', 
+            'td,th': { px: 0, textAlign: 'center' },
+            td: {
+              cursor: 'pointer',
+              transition: 'box-shadow 0.2s ease-in-out',
+              ':hover': {
+                boxShadow: 8
+              }
+            }
+            }}>
+            <TableHead>
+              <TableRow>
+                <TableCell size="small">日</TableCell>
+                <TableCell size="small">一</TableCell>
+                <TableCell size="small">二</TableCell>
+                <TableCell size="small">三</TableCell>
+                <TableCell size="small">四</TableCell>
+                <TableCell size="small">五</TableCell>
+                <TableCell size="small">六</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {weeks.map(week => (
+                <TableRow key={week.toFullString()}>
+                  {week.getDays().map(getDayViewModel).map(day => (
+                    <TableCell
+                      key={day.solar.toYmd()}
+                      sx={{
+                        '>*': {
+                          opacity: day.solar.getMonth() !== month ? 0.4 : 1 
+                        }
+                      }}
+                      size="small"
+                      onClick={() => setShowDialog(day)}>
+                      <Typography variant="h5" fontWeight='bold' color={day.displayColor}>
+                        {day.solarDayDisplay}
+                      </Typography>
+                      <Typography variant="caption" color={day.lunar.getJieQi() ? '#48c739' : day.displayColor}>
+                        <div>
+                          {day.lunarDayDisplay}
+                        </div>
+                        <div>
+                          {day.holidayDisplay}
+                        </div>
+                      </Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Grid>
+        <Grid item flex={1} />
+        <Grid item container component='footer' justifyContent='center' alignSelf='flex-end'>
+          <Grid item>
+            <Typography variant='caption' gutterBottom>
+              <Link href="./v1.html">前往舊版</Link> | <Link href="https://github.com/dipsywong98/old-calendar/issues">意見回饋</Link>
+            </Typography>
+          </Grid>
+        </Grid>
       </Container>
       <Dialog open={showDialog !== null} onClose={() => setShowDialog(null)}>
         {showDialog && (
@@ -250,7 +274,7 @@ function App() {
           </>
         )}
       </Dialog>
-    </Box>
+    </Grid>
   )
 }
 
