@@ -1,0 +1,210 @@
+<!-- 加入五运六气及属性卦判断 by jjxu
+2014.10.05 相比于初版：
++增加了时辰的五运六气换算；
+*修复了界面右侧按钮，已经可以使用了；
+-界面上去除左侧的世界时间；
+-删除部分无用代码；
+ -->
+<!-- 修正chrome 問題及PWA by dipsy
+2021.5.8 相比上一版
++ 修正在非IE瀏覽器上無法使用的bug
++ 可以以PWA形式安裝在電腦/手機離線使用
++ 更手機友善
+ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+    <TITLE>万年历-无节令交接</TITLE>
+    <META content="农历; 阳历; 月历; 节日; 时区; 节气; 八字; 干支; 生肖; gregorian solar; chinese lunar; calendar;" name=keywords>
+    <META content=All name=robots>
+    <META content="gregorian solar calendar and chinese lunar calendar" name=description>
+    <META http-equiv=Content-Type content="text/html; charset=gb2312">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" sizes="57x57" href="./images/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./images/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./images/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./images/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./images/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./images/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./images/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./images/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./images/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./images/icons/android-icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./images/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./images/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/icons/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#db4938">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#db4938">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FF275PK7HD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-FF275PK7HD');
+    </script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker
+                    .register("./serviceWorker.js")
+                    .then(function(){ console.log("service worker registered")})
+                    .catch(function(err){console.log("service worker not registered", err)})
+            })
+        }
+    </script>
+    
+
+
+    <STYLE>
+        .todyaColor {
+            BACKGROUND-COLOR: aqua
+        }
+
+        .cell {
+            cursor: pointer;
+            border: transparent 1px solid;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .cell:hover {
+            border-color: #a8a8a8;
+            background-color: #e8e8e858;
+        }
+    </STYLE>
+
+    <META content="MSHTML 6.00.2800.1505" name=GENERATOR>
+</HEAD>
+
+<BODY leftMargin=0 topMargin=0 onload=initial()>
+    <main>
+        <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <DIV id=detail></DIV>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <CENTER>
+            <FORM name=CLD>
+                <TABLE>
+                    <TBODY>
+                        <TR>
+                            <TD align=middle>
+                                <DIV
+                                    style="Z-INDEX: -1; POSITION: fixed; TOP: 30px; text-align: center;left: 0; right: 0px">
+                                    <FONT id=YMBG style="FONT-SIZE: 90pt; COLOR: #f0f0f0; FONT-FAMILY: 'Arial Black'">
+                                    </FONT>
+                                </DIV>
+                                <TABLE border=0 style="table-layout: fixed; width: 100%">
+                                    <TBODY>
+                                        <TR>
+                                            <TD colSpan=3>
+                                                <INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('YU')" type=button
+                                                    value=←年>
+                                                <INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('MU')" type=button
+                                                    value=←月>
+                                            </TD>
+                                            <TD colspan="1" style="text-align: center;">
+                                                <INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('')" type=button
+                                                    value=本月>
+                                            </TD>
+                                            <TD colspan="3" style="text-align: right;">
+                                                <INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('MD')" type=button
+                                                    value=月→>
+                                                <INPUT style="FONT-SIZE: 9pt" onclick="pushBtm('YD')" type=button
+                                                    value=年→>
+                                            </TD>
+                                        </TR>
+                                        <TR>
+                                            <TD bgColor=#000080 colSpan=7>
+                                                <FONT style="FONT-SIZE: 9pt" color=#ffffff size=2>西历<SELECT
+                                                        style="FONT-SIZE: 9pt" onchange=changeCld() name=SY>
+                                                        <SCRIPT language=JavaScript>
+                                                            for (i = 1900; i < 2050; i++) document.write('<option>' + i)
+                                                        </SCRIPT>
+                                                    </SELECT>年<SELECT style="FONT-SIZE: 9pt" onchange=changeCld()
+                                                        name=SM>
+                                                        <SCRIPT language=JavaScript>
+                                                            for (i = 1; i < 13; i++) document.write('<option>' + i)
+                                                        </SCRIPT>
+                                                    </SELECT>月</FONT>
+                                                <FONT id=GZ face=宋体 color=#ffffff size=4></FONT><BR>
+                                            </TD>
+                                        </TR>
+                                        <TR align=middle bgColor=#e0e0e0>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>日</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>一</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>二</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>三</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>四</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>五</FONT>
+                                            </TD>
+                                            <TD width=54>
+                                                <FONT style="FONT-SIZE: 9pt" size=2>六</FONT>
+                                            </TD>
+                                        </TR>
+                                        <SCRIPT language=JavaScript>
+                                            var gNum
+                                            for (i = 0; i < 6; i++) {
+                                                document.write('<tr align=center>')
+                                                for (j = 0; j < 7; j++) {
+                                                    gNum = i * 7 + j
+                                                    document.write('<td class="cell" id="GD' + gNum + '" onClick="mOvr(' + gNum + ')"><font id="SD' + gNum + '" size=5 face="Arial Black"')
+                                                    if (j == 0) document.write(' color=red')
+                                                    if (j == 6)
+                                                        if (i % 2 == 1) document.write(' color=red')
+                                                        else document.write(' color=green')
+                                                    document.write(' TITLE=""> </font><br><font id="LD' + gNum + '" size=2 style="font-size:9pt"> </font></td>')
+                                                }
+                                                document.write('</tr>')
+                                            }
+                                        </SCRIPT>
+                                    </TBODY>
+                                </TABLE>
+                            </TD>
+                        </TR>
+                    </TBODY>
+                </TABLE>
+            </FORM>
+        </CENTER>
+        <div>
+            <a href="./">前往新版</a>
+        </div>
+    </main>
+
+
+</BODY>
+<script src="./calendar.js"></script>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+    crossorigin="anonymous"></script>
+</HTML>
