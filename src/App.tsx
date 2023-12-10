@@ -20,6 +20,33 @@ const 支轉六氣: Record<string, string> = {
   子: '少阴君火', 丑: '太阴湿土', 寅: '少阳相火', 卯: '阳明燥金', 辰: '太阳寒水', 巳: '厥阴风木',
   午: '少阴君火', 未: '太阴湿土', 申: '少阳相火', 酉: '阳明燥金', 戌: '太阳寒水', 亥: '厥阴风木',
 }
+const 干轉洛書: Record<string, number> = {
+  甲: 3,
+  乙: 2,
+  丙: 1,
+  丁: 5,
+  戊: 5,
+  己: 5,
+  庚: 6,
+  辛: 7,
+  壬: 8,
+  癸: 4,
+}
+const 支轉洛書: Record<string, number> = {
+  子: 8,
+  丑: 4,
+  寅: 4,
+  卯: 3,
+  辰: 2,
+  巳: 2,
+  午: 9,
+  未: 5,
+  申: 5,
+  酉: 6,
+  戌: 7, 
+  亥: 7,
+
+}
 const 干轉八卦 = (年干: string, 月干: string, 日干: string) => {
   const y = Number(干轉五運[年干][1] === '太')
   const m = Number(干轉五運[月干][1] === '太')
@@ -38,8 +65,8 @@ const getDayViewModel = (solar: Solar) => {
   const lunarMonth = `${lunar.getMonthInChinese()}月`.replace('腊', '十二').replace('冬', '十一')
   const lunarDayDisplay = lunar.getJieQi() || (lunar.getDay() === 1 ? lunarMonth : lunarDay)
   const holidayDisplay = holiday?.getName() ?? '　' // full space to place hold
+
   const detailHeading = `${solar.getYear()}年${solar.getMonth()}月${solar.getDay()}日 星期${solar.getWeekInChinese()}`
-  const lunarText = `农历 ${lunarMonth}${lunarDay}`
   const [年干, 年支] = lunar.getYearInGanZhi().split('')
   const [月干, 月支] = [天干[(lunar.getYearGanIndex() * 12 + Math.abs(lunar.getMonth()) + 1) % 10], 地支[(Math.abs(lunar.getMonth()) + 1) % 12]]
   const [日干, 日支] = lunar.getDayInGanZhi().split('')
@@ -50,14 +77,15 @@ const getDayViewModel = (solar: Solar) => {
     const 時支 = 地支[(lunar.getTimeZhiIndex() + offset) % 12]
     const 時運 = 干轉五運[時干]
     const 時氣 = 支轉六氣[時支]
-    return `${pad(timeStart)}-${pad(timeEnd)} ${時干}${時支}時 ${時運}${時氣}時`
+    return `${pad(timeStart)}-${pad(timeEnd)} ${時干}${時支}時 ${時運}${時氣}時 (${干轉洛書[時干]}${支轉洛書[時支]})`
   })
-  const 年運氣 = `${干轉五運[年干]}${支轉六氣[年支]}年`
-  const 月運氣 = `${干轉五運[月干]}${支轉六氣[月支]}月`
-  const 日運氣 = `${干轉五運[日干]}${支轉六氣[日支]}月`
+  const 年運氣 = `${年干}${年支}年 ${干轉五運[年干]}${支轉六氣[年支]}年 (${干轉洛書[年干]}${支轉洛書[年支]})`
+  const 月運氣 = `${月干}${月支}月 ${干轉五運[月干]}${支轉六氣[月支]}月 (${干轉洛書[月干]}${支轉洛書[月支]})`
+  const 日運氣 = `${日干}${日支}日 ${干轉五運[日干]}${支轉六氣[日支]}日 (${干轉洛書[日干]}${支轉洛書[日支]})`
   const 八卦 = 干轉八卦(年干, 月干, 日干)
+  const lunarText = `农历 ${lunarMonth}${lunarDay} ${八卦}`
 
-  const gzText = `${年干}${年支}年 ${月干}${月支}月 ${日干}${日支}日`
+  const gzText = ``
   return {
     solar,
     solarDayDisplay,
