@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { HolidayUtil, Solar, SolarMonth } from 'lunar-typescript';
-import { AppBar, Box, Container, Grid, IconButton, Input, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Container, Dialog, DialogContent, DialogTitle, Grid, IconButton, Input, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -10,23 +10,70 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
+const 天干 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+const 地支 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+const 干轉五運: Record<string, string> = {
+  甲: '土太过',  乙: '金不及',  丙: '水太过',  丁: '木不及',  戊: '火太过',
+  己: '土不及',  庚: '金太过',  辛: '水不及',  壬: '木太过',  癸: '火不及'
+}
+const 支轉六氣: Record<string, string> = {
+  子: '少阴君火', 丑: '太阴湿土', 寅: '少阳相火', 卯: '阳明燥金', 辰: '太阳寒水', 巳: '厥阴风木',
+  午: '少阴君火', 未: '太阴湿土', 申: '少阳相火', 酉: '阳明燥金', 戌: '太阳寒水', 亥: '厥阴风木',
+}
+const 干轉八卦 = (年干: string, 月干: string, 日干: string) => {
+  const y = Number(干轉五運[年干][1] === '太')
+  const m = Number(干轉五運[月干][1] === '太')
+  const d = Number(干轉五運[日干][1] === '太')
+  return '乾兌离震巽坎艮坤'[y << 2 | m << 1 | d]
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
 const getDayViewModel = (solar: Solar) => {
   const lunar = solar.getLunar()
   const solarDayDisplay = solar.getDay()
   const holiday = HolidayUtil.getHoliday(solar.getYear(), solar.getMonth(), solar.getDay())
   const solarDayDisplayColor = solar.getWeek() === 0 || holiday !== null ? 'error' : undefined
   const lunarDay = lunar.getDayInChinese()
-  const lunarMonth = lunar.getMonthInChinese()
-  const lunarDayDisplay = lunar.getJieQi() || (lunar.getDay() === 1 ? `${lunarMonth}月` : lunarDay)
+  const lunarMonth = `${lunar.getMonthInChinese()}月`.replace('腊', '十二').replace('冬', '十一')
+  const lunarDayDisplay = lunar.getJieQi() || (lunar.getDay() === 1 ? lunarMonth : lunarDay)
   const holidayDisplay = holiday?.getName() ?? '　' // full space to place hold
-  // const color = 
+  const detailHeading = `${solar.getYear()}年${solar.getMonth()}月${solar.getDay()}日 星期${solar.getWeekInChinese()}`
+  const lunarText = `农历 ${lunarMonth}${lunarDay}`
+  const [年干, 年支] = lunar.getYearInGanZhi().split('')
+  const [月干, 月支] = [天干[(lunar.getYearGanIndex() * 12 + Math.abs(lunar.getMonth()) + 1) % 10], 地支[(Math.abs(lunar.getMonth()) + 1) % 12]]
+  const [日干, 日支] = lunar.getDayInGanZhi().split('')
+  const 時干支 = Array(12).fill(0).map((_, k) => k).map((offset) => {
+    const timeStart = (23 + offset * 2) % 24
+    const timeEnd = (1 + offset * 2) % 24
+    const 時干 = 天干[(lunar.getTimeGanIndex() + offset) % 10]
+    const 時支 = 地支[(lunar.getTimeZhiIndex() + offset) % 12]
+    const 時運 = 干轉五運[時干]
+    const 時氣 = 支轉六氣[時支]
+    return `${pad(timeStart)}-${pad(timeEnd)} ${時干}${時支}時 ${時運}${時氣}時`
+  })
+  const 年運氣 = `${干轉五運[年干]}${支轉六氣[年支]}年`
+  const 月運氣 = `${干轉五運[月干]}${支轉六氣[月支]}月`
+  const 日運氣 = `${干轉五運[日干]}${支轉六氣[日支]}月`
+  const 八卦 = 干轉八卦(年干, 月干, 日干)
+
+  const gzText = `${年干}${年支}年 ${月干}${月支}月 ${日干}${日支}日`
   return {
     solar,
     solarDayDisplay,
     displayColor: solarDayDisplayColor,
     lunar,
+    lunarMonth,
     lunarDayDisplay,
-    holidayDisplay
+    holidayDisplay,
+    detailHeading,
+    lunarText,
+    支干: gzText,
+    年運氣,
+    月運氣,
+    日運氣,
+    八卦,
+    時干支
   }
 }
 
@@ -38,6 +85,7 @@ function App() {
   const weeks = SolarMonth
     .fromYm(year, month)
     .getWeeks(0)
+  const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   return (
     <Box>
       <AppBar position="static">
@@ -49,7 +97,14 @@ function App() {
             <FirstPageIcon />
           </IconButton>
           <IconButton
-            onClick={() => setMonth((month + 10) % 12 + 1)}
+            onClick={() => {
+              if (month === 1) {
+                setYear(year - 1)
+                setMonth(12)
+              } else {
+                setMonth(month - 1)
+              }
+            }}
             color="inherit"
             size="large">
             <NavigateBeforeIcon />
@@ -65,7 +120,13 @@ function App() {
                     value={year}
                     sx={{
                       width: '60px', input: {
-                        color: 'white', textAlign: 'center'
+                        color: 'white',
+                        textAlign: 'center',
+                        MozAppearance: 'textfield',
+                        '&::-webkit-outer-spin-button,&::-webkit-inner-spin-button': {
+                          WebkitAppearance: 'none',
+                          margin: 0
+                        }
                       }
                     }}
                     onChange={({ target }) => setYear(Number.parseInt(target.value))}
@@ -75,7 +136,7 @@ function App() {
                     {...bindTrigger(popupState)}
                   />
                   <Menu {...bindMenu(popupState)}>
-                    {Array(200).fill(1900).map((v, k) => v + k).map((v) => <MenuItem selected={v === year} onClick={() => { popupState.close(); setYear(v) }}>{v}</MenuItem>)}
+                    {Array(200).fill(1900).map((v, k) => v + k).map((v) => <MenuItem key={v} selected={v === year} onClick={() => { popupState.close(); setYear(v) }}>{v}</MenuItem>)}
                   </Menu>
                 </React.Fragment>
               )}
@@ -94,14 +155,21 @@ function App() {
                   color: 'white', textAlign: 'right'
                 }
               }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(v => <MenuItem value={v}>{v}</MenuItem>)}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
             </TextField>
             <Typography>
               月
             </Typography>
           </Grid>
           <IconButton
-            onClick={() => setMonth(month % 12 + 1)}
+            onClick={() => {
+              if (month === 12) {
+                setYear(year + 1)
+                setMonth(1)
+              } else {
+                setMonth(month + 1)
+              }
+            }}
             color="inherit"
             size="large">
             <NavigateNextIcon />
@@ -112,8 +180,8 @@ function App() {
             size="large"><LastPageIcon /></IconButton>
         </Toolbar>
       </AppBar>
-      <Container sx={{ paddingX: [0, 0, 1, 1] }}>
-        <Table sx={{ 'td,th': { maxWidth: 'calc(100vw/7)', minWidth: 'calc(100vw/7)', px: 0, textAlign: 'center' } }}>
+      <Container sx={{ paddingX: 0, margin: 'auto' }}>
+        <Table sx={{ tableLayout: 'fixed', 'td,th': { px: 0, textAlign: 'center' } }}>
           <TableHead>
             <TableRow>
               <TableCell size="small">日</TableCell>
@@ -127,9 +195,13 @@ function App() {
           </TableHead>
           <TableBody>
             {weeks.map(week => (
-              <TableRow>
+              <TableRow key={week.toFullString()}>
                 {week.getDays().map(getDayViewModel).map(day => (
-                  <TableCell size="small">
+                  <TableCell
+                    key={day.solar.toYmd()}
+                    sx={{ opacity: day.solar.getMonth() !== month ? 0.4 : 1 }}
+                    size="small"
+                    onClick={() => setShowDialog(day)}>
                     <Typography variant="h5" fontWeight='bold' color={day.displayColor}>
                       {day.solarDayDisplay}
                     </Typography>
@@ -148,6 +220,36 @@ function App() {
           </TableBody>
         </Table>
       </Container>
+      <Dialog open={showDialog !== null} onClose={() => setShowDialog(null)}>
+        {showDialog && (
+          <>
+            <DialogTitle>
+              {showDialog.detailHeading}
+            </DialogTitle>
+            <DialogContent dividers>
+              <Typography>
+                {showDialog.lunarText}
+              </Typography>
+              <Typography>
+                {showDialog.支干}
+              </Typography>
+              <Typography>
+                {showDialog.年運氣}
+              </Typography>
+              <Typography>
+                {showDialog.月運氣}
+              </Typography>
+              <Typography>
+                {showDialog.日運氣}
+              </Typography>
+              <Typography>
+                {showDialog.八卦}
+              </Typography>
+              {showDialog.時干支.map((s) => <Typography>{s}</Typography>)}
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
     </Box>
   )
 }
