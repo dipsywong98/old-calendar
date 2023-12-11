@@ -16,14 +16,8 @@ const basicColorMap: Record<string, string> = {
 
 const colorMap = {
   ...basicColorMap,
-  ...Object.fromEntries(Object.values(干轉五運).map((五運) => [
-    // [干, basicColorMap[五運[0]]],
-    [五運, basicColorMap[五運[0]]]
-  ])),
-  ...Object.fromEntries(Object.values(支轉六氣).map((六氣) => [
-    // [支, basicColorMap[六氣[3]]],
-    [六氣, basicColorMap[六氣[3]]]
-  ]))
+  ...Object.fromEntries(Object.values(干轉五運).map((五運) => [五運, basicColorMap[五運[0]]])),
+  ...Object.fromEntries(Object.values(支轉六氣).map((六氣) => [六氣, basicColorMap[六氣[3]]]))
 }
 
 export const Highlighter = ({children}: Props) => {
