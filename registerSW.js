@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/old-calendar/sw.js', { scope: '/old-calendar/' })})}
