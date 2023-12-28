@@ -11,6 +11,7 @@ import React from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Highlighter } from './Highlighter';
 import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
+import { blue, cyan, red } from '@mui/material/colors';
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -18,7 +19,7 @@ const getDayViewModel = (solar: Solar) => {
   const lunar = solar.getLunar()
   const solarDayDisplay = solar.getDay()
   const holiday = HolidayUtil.getHoliday(solar.getYear(), solar.getMonth(), solar.getDay())
-  const solarDayDisplayColor = solar.getWeek() === 0 || holiday !== null ? 'error' : undefined
+  const isRedDay = solar.getWeek() === 0 || holiday !== null ? true : false
   const lunarDay = lunar.getDayInChinese()
   const lunarMonth = `${lunar.getMonthInChinese()}月`.replace('腊', '十二').replace('冬', '十一')
   const lunarDayDisplay = lunar.getJieQi() || (lunar.getDay() === 1 ? lunarMonth : lunarDay)
@@ -43,11 +44,14 @@ const getDayViewModel = (solar: Solar) => {
   const 八卦 = `${干轉八卦(年干, 月干, 日干)}卦`
   const lunarText = `农历 ${lunarMonth}${lunarDay}`
 
+  const isToday = solar.toYmd() === Solar.fromDate(new Date()).toYmd()
+
   const gzText = ``
   return {
+    isToday,
     solar,
     solarDayDisplay,
-    displayColor: solarDayDisplayColor,
+    isRedDay,
     lunar,
     lunarMonth,
     lunarDayDisplay,
@@ -73,7 +77,7 @@ function App() {
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   return (
-    <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': {fontWeight: 800 }}} container flexDirection='column'>
+    <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': { fontWeight: 800 } }} container flexDirection='column'>
       <AppBar position="static">
         <Toolbar sx={{ margin: 'auto' }}>
           <IconButton
@@ -168,8 +172,8 @@ function App() {
       </AppBar>
       <Container sx={{ paddingX: 0, margin: 'auto', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Grid item>
-          <Table sx={{ 
-            tableLayout: 'fixed', 
+          <Table sx={{
+            tableLayout: 'fixed',
             'td,th': { px: 0, textAlign: 'center' },
             td: {
               cursor: 'pointer',
@@ -178,7 +182,7 @@ function App() {
                 boxShadow: 8
               }
             }
-            }}>
+          }}>
             <TableHead>
               <TableRow>
                 <TableCell size="small">日</TableCell>
@@ -198,15 +202,29 @@ function App() {
                       key={day.solar.toYmd()}
                       sx={{
                         '>*': {
-                          opacity: day.solar.getMonth() !== month ? 0.4 : 1 
-                        }
+                          opacity: day.solar.getMonth() !== month ? 0.4 : 1
+                        },
                       }}
                       size="small"
                       onClick={() => setShowDialog(day)}>
-                      <Typography variant="h5" fontWeight='bold' color={day.displayColor}>
+                      <Typography
+                        variant="h5"
+                        fontWeight='bold'
+                        sx={
+                          day.isToday
+                            ? {
+                              display: 'inline',
+                              padding: '4px',
+                              background: day.isRedDay ? red[700] : blue[700],
+                              color: '#ffffff',
+                              borderRadius: '50%'
+                            }
+                            : {}
+                        }
+                        color={day.isRedDay ? red[700] : undefined}>
                         {day.solarDayDisplay}
                       </Typography>
-                      <Typography variant="caption" color={day.lunar.getJieQi() ? '#48c739' : day.displayColor}>
+                      <Typography variant="caption" color={day.lunar.getJieQi() ? '#48c739' : day.isRedDay ? red[700] : undefined}>
                         <div>
                           {day.lunarDayDisplay}
                         </div>
@@ -236,7 +254,7 @@ function App() {
             <DialogTitle>
               {showDialog.detailHeading}
             </DialogTitle>
-            <DialogContent dividers sx={{'*': {fontWeight: 800}}}>
+            <DialogContent dividers sx={{ '*': { fontWeight: 800 } }}>
               <Highlighter>
                 {showDialog.lunarText}
               </Highlighter>
