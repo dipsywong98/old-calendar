@@ -11,7 +11,7 @@ import React from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Highlighter } from './Highlighter';
 import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
-import { blue, cyan, red } from '@mui/material/colors';
+import { red } from '@mui/material/colors';
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -77,7 +77,7 @@ function App() {
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   return (
-    <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': { fontWeight: 800 } }} container flexDirection='column'>
+    <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': { fontWeight: 800 }, backgroundColor: 'white' }} container flexDirection='column'>
       <AppBar position="static">
         <Toolbar sx={{ margin: 'auto' }}>
           <IconButton
@@ -210,17 +210,6 @@ function App() {
                       <Typography
                         variant="h5"
                         fontWeight='bold'
-                        sx={
-                          day.isToday
-                            ? {
-                              display: 'inline',
-                              padding: '4px',
-                              background: day.isRedDay ? red[700] : blue[700],
-                              color: '#ffffff',
-                              borderRadius: '50%'
-                            }
-                            : {}
-                        }
                         color={day.isRedDay ? red[700] : undefined}>
                         {day.solarDayDisplay}
                       </Typography>
