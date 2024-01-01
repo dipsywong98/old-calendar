@@ -11,7 +11,7 @@ import React from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Highlighter } from './Highlighter';
 import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
-import { red } from '@mui/material/colors';
+import { blue, red } from '@mui/material/colors';
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -210,6 +210,19 @@ function App() {
                       <Typography
                         variant="h5"
                         fontWeight='bold'
+                        sx={
+                          day.isToday
+                            ? {
+                              display: 'inline-block',
+                              padding: '4px',
+                              background: day.isRedDay ? red[700] : blue[700],
+                              color: '#ffffff',
+                              borderRadius: '50%',
+                              aspectRatio: '1/1',
+                              width: '30px',
+                            }
+                            : { padding: '4px' }
+                        }
                         color={day.isRedDay ? red[700] : undefined}>
                         {day.solarDayDisplay}
                       </Typography>
