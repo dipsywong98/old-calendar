@@ -1,14 +1,10 @@
 import { useState } from 'react'
 import { HolidayUtil, Solar, SolarMonth } from 'lunar-typescript';
-import { AppBar, Container, Dialog, DialogContent, DialogTitle, Grid, IconButton, Input, Link, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
+import { AppBar, Container, Dialog, DialogContent, DialogTitle, Grid, IconButton, Link, MenuItem, Table, TableBody, TableCell, TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import Menu from '@mui/material/Menu';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import React from 'react';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Highlighter } from './Highlighter';
 import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
 import { blue, red } from '@mui/material/colors';
