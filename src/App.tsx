@@ -100,37 +100,19 @@ function App() {
             <NavigateBeforeIcon />
           </IconButton>
           <Grid container alignItems='baseline'>
-            <PopupState variant="popover" popupId="demo-popup-menu">
-              {(popupState) => (
-                <React.Fragment>
-                  <Input
-                    color="warning"
-                    size="small"
-                    type="number"
-                    value={year}
-                    sx={{
-                      width: '60px', input: {
-                        color: 'white',
-                        textAlign: 'center',
-                        MozAppearance: 'textfield',
-                        '&::-webkit-outer-spin-button,&::-webkit-inner-spin-button': {
-                          WebkitAppearance: 'none',
-                          margin: 0
-                        }
-                      }
-                    }}
-                    onChange={({ target }) => setYear(Number.parseInt(target.value))}
-                    endAdornment={
-                      <ArrowDropDownIcon />
-                    }
-                    {...bindTrigger(popupState)}
-                  />
-                  <Menu {...bindMenu(popupState)}>
-                    {Array(200).fill(1900).map((v, k) => v + k).map((v) => <MenuItem key={v} selected={v === year} onClick={() => { popupState.close(); setYear(v) }}>{v}</MenuItem>)}
-                  </Menu>
-                </React.Fragment>
-              )}
-            </PopupState>
+            <TextField
+              size="small"
+              variant='standard'
+              select
+              value={year}
+              onChange={({ target }) => setYear(Number.parseInt(target.value))}
+              sx={{
+                '.MuiInput-root': {
+                  color: 'white', textAlign: 'right'
+                }
+              }}>
+              {Array(200).fill(1900).map((v, k) => v + k).map((v) => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+            </TextField>
             <Typography>
               年
             </Typography>
