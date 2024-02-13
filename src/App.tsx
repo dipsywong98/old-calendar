@@ -66,12 +66,23 @@ const getDayViewModel = (solar: Solar) => {
 function App() {
   const currentYear = new Date().getFullYear()
   const currentMonth = new Date().getMonth() + 1
-  const [year, setYear] = useState(currentYear)
-  const [month, setMonth] = useState(currentMonth)
+  const [year, rawSetYear] = useState(currentYear)
+  const [month, rawSetMonth] = useState(currentMonth)
   const weeks = SolarMonth
     .fromYm(year, month)
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
+  const allMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  const allYears = Array(200).fill(1900).map((v, k) => v + k)
+  const setYear = (year: number) => {
+    if (year < 1900) {
+      throw new Error('Exceed year limit')
+    }
+    rawSetYear(year)
+  }
+  const setMonth = (month: number) => {
+    rawSetMonth(month)
+  }
   return (
     <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': { fontWeight: 800 }, backgroundColor: 'white' }} container flexDirection='column'>
       <AppBar position="static">
@@ -107,7 +118,7 @@ function App() {
                   color: 'white', textAlign: 'right'
                 }
               }}>
-              {Array(200).fill(1900).map((v, k) => v + k).map((v) => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+              {allYears.map((v) => <MenuItem key={v} value={v}>{v}</MenuItem>)}
             </TextField>
             <Typography>
               年
@@ -123,7 +134,7 @@ function App() {
                   color: 'white', textAlign: 'right'
                 }
               }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+              {allMonths.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
             </TextField>
             <Typography>
               月

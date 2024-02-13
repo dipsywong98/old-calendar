@@ -11,6 +11,9 @@ on:
     branches: [ master, v2 ]
   workflow_dispatch:
 
+env:
+  SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+
 jobs:
   build:
 
