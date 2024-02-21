@@ -24,8 +24,8 @@ export const Highlighter = ({children}: Props) => {
   const keywordRegex = new RegExp(Object.keys(colorMap).sort((a, b) => b.length - a.length).map(key => `(${key})`).join('|'))
   const words = children.split(keywordRegex).filter((w) => w?.length > 0)
   return (
-    <Typography>
-      {words.map((word) => <Box component='span' sx={{ color: colorMap[word] }}>{word}</Box>)}
+    <Typography sx={{textWrap: 'nowrap'}}>
+      {words.map((word) => <Box component='span' sx={{ color: colorMap[word], textWrap: 'nowrap' }}>{word}</Box>)}
     </Typography>
   )
 }
