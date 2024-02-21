@@ -66,34 +66,27 @@ const getDayViewModel = (solar: Solar) => {
 function App() {
   const currentYear = new Date().getFullYear()
   const currentMonth = new Date().getMonth() + 1
-  const [year, rawSetYear] = useState(currentYear)
-  const [month, rawSetMonth] = useState(currentMonth)
+  const [year, setYear] = useState(currentYear)
+  const [month, setMonth] = useState(currentMonth)
   const weeks = SolarMonth
     .fromYm(year, month)
     .getWeeks(0)
   const [showDialog, setShowDialog] = useState<ReturnType<typeof getDayViewModel> | null>(null)
   const allMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   const allYears = Array(200).fill(1900).map((v, k) => v + k)
-  const setYear = (year: number) => {
-    if (year < 1900) {
-      throw new Error('Exceed year limit')
-    }
-    rawSetYear(year)
-  }
-  const setMonth = (month: number) => {
-    rawSetMonth(month)
-  }
   return (
     <Grid sx={{ position: 'fixed', top: 0, bottom: 0, left: 0, right: 0, '*': { fontWeight: 800 }, backgroundColor: 'white' }} container flexDirection='column'>
       <AppBar position="static">
         <Toolbar sx={{ margin: 'auto' }}>
           <IconButton
+            disabled={year <= allYears[0]}
             onClick={() => setYear(year - 1)}
             color="inherit"
             size="large">
             <FirstPageIcon />
           </IconButton>
           <IconButton
+            disabled={year <= allYears[0] && month === 1}
             onClick={() => {
               if (month === 1) {
                 setYear(year - 1)
@@ -141,6 +134,7 @@ function App() {
             </Typography>
           </Grid>
           <IconButton
+            disabled={year >= allYears[allYears.length - 1] && month === 12}
             onClick={() => {
               if (month === 12) {
                 setYear(year + 1)
@@ -154,6 +148,7 @@ function App() {
             <NavigateNextIcon />
           </IconButton>
           <IconButton
+            disabled={year >= allYears[allYears.length - 1]}
             onClick={() => setYear(year + 1)}
             color="inherit"
             size="large"><LastPageIcon /></IconButton>
