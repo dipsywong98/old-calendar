@@ -6,7 +6,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Highlighter } from './Highlighter';
-import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦 } from './yi';
+import { 天干, 地支, 干轉五運, 支轉六氣, 干轉洛書, 支轉洛書, 干轉八卦, 支轉生肖 } from './yi';
 import { blue, red } from '@mui/material/colors';
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -38,7 +38,8 @@ const getDayViewModel = (solar: Solar) => {
   const 月運氣 = `${月干}${月支}月 ${干轉五運[月干]}${支轉六氣[月支]}月 (${干轉洛書[月干]}${支轉洛書[月支]})`
   const 日運氣 = `${日干}${日支}日 ${干轉五運[日干]}${支轉六氣[日支]}日 (${干轉洛書[日干]}${支轉洛書[日支]})`
   const 八卦 = `${干轉八卦(年干, 月干, 日干)}卦`
-  const lunarText = `农历 ${lunarMonth}${lunarDay}`
+  const 年生肖 = 支轉生肖[年支]
+  const lunarText = `农历 ${年干}${年支}${年生肖}年 ${lunarMonth}${lunarDay}`
 
   const isToday = solar.toYmd() === Solar.fromDate(new Date()).toYmd()
 
@@ -59,7 +60,8 @@ const getDayViewModel = (solar: Solar) => {
     月運氣,
     日運氣,
     八卦,
-    時干支
+    時干支,
+    年生肖
   }
 }
 
