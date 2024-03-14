@@ -156,7 +156,7 @@ function App() {
             size="large"><LastPageIcon /></IconButton>
         </Toolbar>
       </AppBar>
-      <Container sx={{ paddingX: 0, margin: 'auto', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <Container sx={{ paddingX: 0, margin: 'auto', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
         <Grid item>
           <Table sx={{
             tableLayout: 'fixed',
